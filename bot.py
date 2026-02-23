@@ -1,0 +1,195 @@
+import ssl
+import aiohttp
+import json
+from datetime import datetime, timedelta
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+import os
+
+# ==============================
+# RAILWAY ENV VARIABLES
+# ==============================
+BOT_TOKEN = os.environ.get("BOT_TOKEN")  # Railway'de tanımlı olmalı
+PANEL1_URL = os.environ.get("PANEL1_URL")
+PANEL1_USER = os.environ.get("PANEL1_USER")
+PANEL1_PASS = os.environ.get("PANEL1_PASS")
+PANEL2_URL = os.environ.get("PANEL2_URL")
+PANEL2_USER = os.environ.get("PANEL2_USER")
+PANEL2_PASS = os.environ.get("PANEL2_PASS")
+
+# ==============================
+# PANEL AYARLARI
+# ==============================
+PANELS = {
+    "panel1": {
+        "url": PANEL1_URL,
+        "username": PANEL1_USER,
+        "password": PANEL1_PASS
+    },
+    "panel2": {
+        "url": PANEL2_URL,
+        "username": PANEL2_USER,
+        "password": PANEL2_PASS
+    }
+}
+
+# ==============================
+# KULLANICILAR (Panel ve UUID)
+# ==============================
+USERS = {
+    # Panel 1
+    "SKY05": {"panel": "panel1", "uuid": "94f20dee-543a-4e4d-956a-5251e7721e9c"},
+    "SKY11": {"panel": "panel1", "uuid": "bbc5ad96-b339-4f53-a1f7-528c2f0495c9"},
+    "SKY17": {"panel": "panel1", "uuid": "db292c43-c433-485c-b603-9e1323e892ab"},
+    "SKY34": {"panel": "panel1", "uuid": "7bb5af42-d569-40de-9e48-86f9b7e7d65c"},
+    "SKY43": {"panel": "panel1", "uuid": "76f16d02-afb9-4bce-96c9-f98bd6a8bdff"},
+    "SKY49": {"panel": "panel1", "uuid": "92fb9297-a2f9-4203-af3c-db0bdd8aa1a9"},
+    "SKY54": {"panel": "panel1", "uuid": "2c0364e5-504a-4eaf-9155-412d6d4a9b73"},
+
+    # Panel 2
+    "SKY02": {"panel": "panel2", "uuid": "334be231-ec89-4d1a-a99b-f85fa6f871d6"},
+    "SKY03": {"panel": "panel2", "uuid": "29acbaca-c3b2-46c9-bbaf-0907b628dc63"},
+    "SKY04": {"panel": "panel2", "uuid": "84993c95-d62e-42ae-884f-cadbc10f15e1"},
+    "SKY06": {"panel": "panel2", "uuid": "27d0cf5c-dbff-4e81-967e-308352a506c8"},
+    "SKY07": {"panel": "panel2", "uuid": "79372884-c23a-430a-95b1-b1d2e753b367"},
+    "SKY08": {"panel": "panel2", "uuid": "06a18dd0-5fa1-4f42-b968-7ebed93e7111"},
+    "SKY09": {"panel": "panel2", "uuid": "f0a7568d-a5bb-4bc0-9179-0eebb9225fac"},
+    "SKY10": {"panel": "panel2", "uuid": "da009959-f91e-4571-b123-c0b373ebacab"},
+    "SKY12": {"panel": "panel2", "uuid": "c329fba4-ef31-42b8-85db-61bd2cde5458"},
+    "SKY13": {"panel": "panel2", "uuid": "282fba02-2d4b-437f-bba3-0e8b1d456b2c"},
+    "SKY14": {"panel": "panel2", "uuid": "c35e3ab6-69d6-4eab-a3b6-75906d1c9ee6"},
+    "SKY15": {"panel": "panel2", "uuid": "50ae9b77-bebf-466d-8707-968fbf4e4479"},
+    "SKY16": {"panel": "panel2", "uuid": "3c8c1925-ba89-40f1-8fe7-8536684d1e77"},
+    "SKY18": {"panel": "panel2", "uuid": "01561687-0586-46ca-9517-0632ca3d7866"},
+    "SKY19": {"panel": "panel2", "uuid": "864b456d-ed4c-4bbe-ae66-85baf7311691"},
+    "SKY20": {"panel": "panel2", "uuid": "5d325e05-ab32-4628-9e2e-5b97c62cf023"},
+    "SKY21": {"panel": "panel2", "uuid": "6b7b1396-e62b-48a9-bf77-29ea5a6346dc"},
+    "SKY22": {"panel": "panel2", "uuid": "a829bacd-8d30-40d2-bf09-bb1c1d364b39"},
+    "SKY23": {"panel": "panel2", "uuid": "8e051d4e-8f27-4453-9212-97df41309dd8"},
+    "SKY24": {"panel": "panel2", "uuid": "20526cd0-9d2b-4970-9279-3e8e381f2645"},
+    "SKY25": {"panel": "panel2", "uuid": "5057b359-2280-420b-97ff-7a4aff489eed"},
+    "SKY26": {"panel": "panel2", "uuid": "5f1668eb-f9d3-4917-ab6b-4dee1833a816"},
+    "SKY27": {"panel": "panel2", "uuid": "405a91e1-1cdd-43ab-9943-435adf265e40"},
+    "SKY28": {"panel": "panel2", "uuid": "a0f2444f-0d18-4caa-a42e-60e95ff67f6b"},
+    "SKY29": {"panel": "panel2", "uuid": "d0615b6f-01c8-4bea-a801-9e3419cda1da"},
+    "SKY30": {"panel": "panel2", "uuid": "990dfc55-5849-487d-a0cd-94c904348264"},
+    "SKY31": {"panel": "panel2", "uuid": "f1a220ef-a075-46d7-b0dc-1fc2339bae7"},
+    "SKY32": {"panel": "panel2", "uuid": "b7550f88-d065-4585-8d94-71325ccf27ea"},
+    "SKY33": {"panel": "panel2", "uuid": "c4a38ec6-60cb-413a-b872-3fec4b0d3598"},
+    "SKY36": {"panel": "panel2", "uuid": "4dd410cf-45f0-48f2-bbcd-02c8638c149a"},
+    "SKY37": {"panel": "panel2", "uuid": "c627ef85-4a44-4573-9dfa-b2661fe75b08"},
+    "SKY38": {"panel": "panel2", "uuid": "c519883b-89f2-4c47-a98d-96663eaa5e1f"},
+    "SKY39": {"panel": "panel2", "uuid": "536c4231-a079-42af-a707-6c393eb5f649"},
+    "SKY40": {"panel": "panel2", "uuid": "6852a932-8057-4f5d-8ac5-37022716f816"},
+    "SKY41": {"panel": "panel2", "uuid": "e310b150-1498-4a11-a1c8-62496139dc99"},
+    "SKY42": {"panel": "panel2", "uuid": "60a72d41-e4b4-4477-a5b5-7167721c99ef"},
+    "SKY44": {"panel": "panel2", "uuid": "064ed6b9-6266-4d61-b066-ef205f1ff5fd"},
+    "SKY45": {"panel": "panel2", "uuid": "f8927f8c-04eb-42a5-9a95-352b07b81358"},
+    "SKY46": {"panel": "panel2", "uuid": "25912608-32e0-4b63-a32e-2db0432c1d1d"},
+    "SKY47": {"panel": "panel2", "uuid": "7f637dea-3015-48b5-966c-5b80430dc95"},
+    "SKY48": {"panel": "panel2", "uuid": "b6f1fbcb-e2c7-4f5a-991b-19decee90db3"},
+    "SKY50": {"panel": "panel2", "uuid": "4120e6d4-5f7b-491b-949d-c8ae346b16e8"},
+    "SKY51": {"panel": "panel2", "uuid": "50f4afaa-f59c-4ef3-8f40-67f8a2f38318"},
+    "SKY52": {"panel": "panel2", "uuid": "53fe3162-6581-41ed-b0df-2bda0d4802e0"},
+    "SKY53": {"panel": "panel2", "uuid": "5a1c54c7-0f64-4ddb-b362-161b361cc0c7"},
+    "SKY55": {"panel": "panel2", "uuid": "198b38cd-fd88-48fc-89b2-33657130d07e"},
+    "SKY56": {"panel": "panel2", "uuid": "f13d2ad0-06e3-4d48-b5a5-cad1087c6846"},
+    "SKY57": {"panel": "panel2", "uuid": "df0f0e3b-c9de-41a2-ac12-ef1eff66cb1"},
+    "SKY58": {"panel": "panel2", "uuid": "68b83787-1206-48d7-ac76-26b0b27adc55"},
+    "SKY59": {"panel": "panel2", "uuid": "77592ca5-dc27-42d6-8fa4-230d6b2980d0"},
+    "SKY60": {"panel": "panel2", "uuid": "e22d0b42-c4df-4ac4-ae60-9ba73cf91745"},
+    "SKY61": {"panel": "panel2", "uuid": "38b4371e-7102-4a14-97e0-6fea46918057"},
+    "SKY62": {"panel": "panel2", "uuid": "bcfe2ada-620b-4900-9f5a-cd78f24ac436"}
+}
+
+# ==============================
+# DEVIRES DOSYASINDAN OKUMA
+# ==============================
+def load_devirs():
+    try:
+        with open("devir.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+# ==============================
+# YATIRIM, ÇEKİM & TESLİMAT CEK
+# ==============================
+async def fetch_user_amount(panel_config, user_uuid):
+    ssl_ctx = ssl.create_default_context()
+    ssl_ctx.check_hostname = False
+    ssl_ctx.verify_mode = ssl.CERT_NONE
+
+    login_url = f"{panel_config['url']}/login"
+    reports_url = f"{panel_config['url']}/reports/quickly"
+
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=ssl_ctx)) as session:
+        async with session.get(login_url) as r:
+            text = await r.text()
+            token = ""
+            for line in text.splitlines():
+                if 'name="_token"' in line:
+                    token = line.split('value="')[1].split('"')[0]
+                    break
+
+        await session.post(login_url, data={
+            "_token": token,
+            "email": panel_config['username'],
+            "password": panel_config['password']
+        })
+
+        async with session.get(reports_url) as r:
+            text = await r.text()
+            csrf = ""
+            for line in text.splitlines():
+                if 'name="csrf-token"' in line or 'meta name="csrf-token"' in line:
+                    csrf = line.split('content="')[1].split('"')[0]
+                    break
+
+        today = (datetime.utcnow() + timedelta(hours=3)).strftime("%Y-%m-%d")
+
+        async with session.post(
+            reports_url,
+            headers={"X-CSRF-TOKEN": csrf, "Content-Type": "application/json"},
+            json={"site": "", "dateone": today, "datetwo": today, "bank": "", "user": user_uuid}
+        ) as r:
+            data = await r.json()
+            deposit_total = float(data.get("deposit", [0])[0] or 0)
+            withdraw_total = float(data.get("withdraw", [0])[0] or 0)
+            delivery_total = float(data.get("delivery", [0,0])[1] or 0)
+            net = deposit_total - withdraw_total - delivery_total
+            return net
+
+# ==============================
+# /kasa KOMUTU
+# ==============================
+async def kasa(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    msg = await update.message.reply_text("⏳ Kasa verileri alınıyor...")
+    try:
+        devirs = load_devirs()
+        results = []
+        total = 0
+        for label in sorted(USERS.keys()):
+            info = USERS[label]
+            panel = info["panel"]
+            uuid = info["uuid"]
+            net = await fetch_user_amount(PANELS[panel], uuid)
+            devir = float(devirs.get(label, 0))
+            net_total = net + devir
+            total += net_total
+            net_str = f"{int(net_total):,}".replace(",", ".") + " TL"
+            results.append(f"{label} : {net_str}")
+        results.append(f"\nTOPLAM KASA : {int(total):,}".replace(",", ".") + " TL")
+        text = "\n".join(results)
+        await msg.edit_text(text)
+    except Exception as e:
+        await msg.edit_text(f"❌ Hata oluştu:\n{e}")
+
+# ==============================
+# BOTU BASLAT
+# ==============================
+if __name__ == "__main__":
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("kasa", kasa))
+    print("Bot çalışıyor...")
+    app.run_polling()
