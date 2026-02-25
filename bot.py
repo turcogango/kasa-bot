@@ -99,8 +99,8 @@ USERS = {
     "SKY59": {"panel": "panel2", "uuid": "77592ca5-dc27-42d6-8fa4-230d6b2980d0"},
     "SKY60": {"panel": "panel2", "uuid": "e22d0b42-c4df-4ac4-ae60-9ba73cf91745"},
     "SKY61": {"panel": "panel2", "uuid": "38b4371e-7102-4a14-97e0-6fea46918057"},
-    "SKY62": {"panel": "panel2", "uuid": "bcfe2ada-620b-4900-9f5a-cd78f24ac436"}
-    "SKY63": {"panel": "panel2", "uuid": "3b36b55a-3b75-4198-96a6-fe8652d13820"}
+    "SKY62": {"panel": "panel2", "uuid": "bcfe2ada-620b-4900-9f5a-cd78f24ac436"},
+    "SKY63": {"panel": "panel2", "uuid": "3b36b55a-3b75-4198-96a6-fe8652d13820"},
     "SKY64": {"panel": "panel2", "uuid": "411373a6-41e2-480f-9e9c-962722a915d8"}
 }
 
@@ -196,3 +196,4 @@ if __name__ == "__main__":
     print("Bot çalışıyor...")
 
     app.run_polling()
+
