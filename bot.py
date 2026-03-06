@@ -39,12 +39,16 @@ PANELS = {
 USERS = {
     # Panel 1
     "SKY05": {"panel": "panel1", "uuid": "94f20dee-543a-4e4d-956a-5251e7721e9c"},
+    "SKY08": {"panel": "panel1", "uuid": "7d173d1a-e258-4e96-8215-a0fe4f92b7f9"},
+    "SKY10": {"panel": "panel1", "uuid": "b6b747cc-3462-4e49-9a69-10e403e30bf8"},
     "SKY11": {"panel": "panel1", "uuid": "bbc5ad96-b339-4f53-a1f7-528c2f0495c9"},
     "SKY17": {"panel": "panel1", "uuid": "db292c43-c433-485c-b603-9e1323e892ab"},
     "SKY34": {"panel": "panel1", "uuid": "7bb5af42-d569-40de-9e48-86f9b7e7d65c"},
     "SKY43": {"panel": "panel1", "uuid": "76f16d02-afb9-4bce-96c9-f98bd6a8bdff"},
     "SKY49": {"panel": "panel1", "uuid": "92fb9297-a2f9-4203-af3c-db0bdd8aa1a9"},
     "SKY54": {"panel": "panel1", "uuid": "2c0364e5-504a-4eaf-9155-412d6d4a9b73"},
+    "SKY63": {"panel": "panel1", "uuid": "732ab5c4-6a4c-4d93-923a-78f1763b0df3"},
+    "SKY64": {"panel": "panel1", "uuid": "b45bc465-cde9-4835-8cf4-82ab4d2555eb"},
 
     # Panel 2
     "SKY02": {"panel": "panel2", "uuid": "334be231-ec89-4d1a-a99b-f85fa6f871d6"},
@@ -52,9 +56,7 @@ USERS = {
     "SKY04": {"panel": "panel2", "uuid": "84993c95-d62e-42ae-884f-cadbc10f15e1"},
     "SKY06": {"panel": "panel2", "uuid": "27d0cf5c-dbff-4e81-967e-308352a506c8"},
     "SKY07": {"panel": "panel2", "uuid": "79372884-c23a-430a-95b1-b1d2e753b367"},
-    "SKY08": {"panel": "panel2", "uuid": "06a18dd0-5fa1-4f42-b968-7ebed93e7111"},
     "SKY09": {"panel": "panel2", "uuid": "f0a7568d-a5bb-4bc0-9179-0eebb9225fac"},
-    "SKY10": {"panel": "panel2", "uuid": "da009959-f91e-4571-b123-c0b373ebacab"},
     "SKY12": {"panel": "panel2", "uuid": "c329fba4-ef31-42b8-85db-61bd2cde5458"},
     "SKY13": {"panel": "panel2", "uuid": "282fba02-2d4b-437f-bba3-0e8b1d456b2c"},
     "SKY14": {"panel": "panel2", "uuid": "c35e3ab6-69d6-4eab-a3b6-75906d1c9ee6"},
@@ -101,8 +103,6 @@ USERS = {
     "SKY60": {"panel": "panel2", "uuid": "e22d0b42-c4df-4ac4-ae60-9ba73cf91745"},
     "SKY61": {"panel": "panel2", "uuid": "38b4371e-7102-4a14-97e0-6fea46918057"},
     "SKY62": {"panel": "panel2", "uuid": "bcfe2ada-620b-4900-9f5a-cd78f24ac436"},
-    "SKY63": {"panel": "panel2", "uuid": "3b36b55a-3b75-4198-96a6-fe8652d13820"},
-    "SKY64": {"panel": "panel2", "uuid": "411373a6-41e2-480f-9e9c-962722a915d8"},
     "SKY65": {"panel": "panel2", "uuid": "28fd0795-b73a-4f1e-88af-28ef6482af5f"},
     "SKY66": {"panel": "panel2", "uuid": "b6dae810-6e82-4639-801f-9ac667267b70"},
     "SKY67": {"panel": "panel2", "uuid": "1bbcc54f-26a7-4768-bfb9-b213322ad858"},
@@ -204,6 +204,7 @@ if __name__ == "__main__":
     print("Bot çalışıyor...")
 
     app.run_polling()
+
 
 
 
