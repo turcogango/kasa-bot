@@ -1,11 +1,10 @@
-import os
 import ssl
 import aiohttp
 import json
-import asyncio
 from datetime import datetime, timedelta
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+import os
 
 # ==============================
 # RAILWAY ENV VARIABLES
@@ -22,8 +21,16 @@ PANEL2_PASS = os.environ.get("PANEL2_PASS")
 # PANEL AYARLARI
 # ==============================
 PANELS = {
-    "panel1": {"url": PANEL1_URL, "username": PANEL1_USER, "password": PANEL1_PASS},
-    "panel2": {"url": PANEL2_URL, "username": PANEL2_USER, "password": PANEL2_PASS}
+    "panel1": {
+        "url": PANEL1_URL,
+        "username": PANEL1_USER,
+        "password": PANEL1_PASS
+    },
+    "panel2": {
+        "url": PANEL2_URL,
+        "username": PANEL2_USER,
+        "password": PANEL2_PASS
+    }
 }
 
 # ==============================
@@ -101,39 +108,35 @@ async def kasa(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         users = load_users()
         devirs = load_devirs()
+
         results = []
         total = 0
 
-        # Paralel görevler oluştur
-        tasks = []
-        user_labels = sorted(users.keys())
-        for label in user_labels:
+        for label in sorted(users.keys()):
             info = users[label]
-            tasks.append(fetch_user_amount(PANELS[info["panel"]], info["uuid"]))
 
-        # Paralel çalıştır
-        net_values = await asyncio.gather(*tasks, return_exceptions=True)
+            net = await fetch_user_amount(
+                PANELS[info["panel"]],
+                info["uuid"]
+            )
 
-        # Sonuçları işleme
-        for i, label in enumerate(user_labels):
-            net = net_values[i]
-            if isinstance(net, Exception):
-                net = 0
             devir = float(devirs.get(label, 0))
             net_total = net + devir
             total += net_total
+
             net_str = f"{int(net_total):,}".replace(",", ".") + " TL"
             results.append(f"{label} : {net_str}")
 
-        await msg.delete()  # loading mesajını sil
+        # loading mesajını sil
+        await msg.delete()
 
-        # 5'erli gruplar halinde gönder
+        # 5'li mesajlar halinde gönder
         chunk_size = 5
         for i in range(0, len(results), chunk_size):
             chunk = results[i:i + chunk_size]
             await update.message.reply_text("\n".join(chunk))
 
-        # toplam mesaj
+        # toplam mesajı
         await update.message.reply_text(
             f"TOPLAM KASA : {int(total):,}".replace(",", ".") + " TL"
         )
@@ -147,5 +150,6 @@ async def kasa(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("kasa", kasa))
+
     print("Bot çalışıyor...")
     app.run_polling()
