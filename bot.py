@@ -9,7 +9,7 @@ import os
 # ==============================
 # RAILWAY ENV VARIABLES
 # ==============================
-BOT_TOKEN = os.environ.get("BOT_TOKEN")  # Railway'de tanımlı olmalı
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 PANEL1_URL = os.environ.get("PANEL1_URL")
 PANEL1_USER = os.environ.get("PANEL1_USER")
 PANEL1_PASS = os.environ.get("PANEL1_PASS")
@@ -34,105 +34,17 @@ PANELS = {
 }
 
 # ==============================
-# KULLANICILAR (Panel ve UUID)
+# USERS.JSON OKU
 # ==============================
-USERS = {
-    # Panel 1
-    "SKY05": {"panel": "panel1", "uuid": "94f20dee-543a-4e4d-956a-5251e7721e9c"},
-    "SKY08": {"panel": "panel1", "uuid": "7d173d1a-e258-4e96-8215-a0fe4f92b7f9"},
-    "SKY10": {"panel": "panel1", "uuid": "b6b747cc-3462-4e49-9a69-10e403e30bf8"},
-    "SKY17": {"panel": "panel1", "uuid": "db292c43-c433-485c-b603-9e1323e892ab"},
-    "SKY49": {"panel": "panel1", "uuid": "92fb9297-a2f9-4203-af3c-db0bdd8aa1a9"},
-    "SKY63": {"panel": "panel1", "uuid": "732ab5c4-6a4c-4d93-923a-78f1763b0df3"},
-    "SKY64": {"panel": "panel1", "uuid": "b45bc465-cde9-4835-8cf4-82ab4d2555eb"},
-
-    # Panel 2
-    "SKY02": {"panel": "panel2", "uuid": "334be231-ec89-4d1a-a99b-f85fa6f871d6"},
-    "SKY03": {"panel": "panel2", "uuid": "29acbaca-c3b2-46c9-bbaf-0907b628dc63"},
-    "SKY04": {"panel": "panel2", "uuid": "84993c95-d62e-42ae-884f-cadbc10f15e1"},
-    "SKY06": {"panel": "panel2", "uuid": "27d0cf5c-dbff-4e81-967e-308352a506c8"},
-    "SKY07": {"panel": "panel2", "uuid": "79372884-c23a-430a-95b1-b1d2e753b367"},
-    "SKY09": {"panel": "panel2", "uuid": "f0a7568d-a5bb-4bc0-9179-0eebb9225fac"},
-    "SKY11": {"panel": "panel2", "uuid": "db45b7f2-87e3-475b-ae9d-01b6963b10c8"},
-    "SKY12": {"panel": "panel2", "uuid": "c329fba4-ef31-42b8-85db-61bd2cde5458"},
-    "SKY13": {"panel": "panel2", "uuid": "282fba02-2d4b-437f-bba3-0e8b1d456b2c"},
-    "SKY14": {"panel": "panel2", "uuid": "c35e3ab6-69d6-4eab-a3b6-75906d1c9ee6"},
-    "SKY15": {"panel": "panel2", "uuid": "50ae9b77-bebf-466d-8707-968fbf4e4479"},
-    "SKY16": {"panel": "panel2", "uuid": "3c8c1925-ba89-40f1-8fe7-8536684d1e77"},
-    "SKY18": {"panel": "panel2", "uuid": "01561687-0586-46ca-9517-0632ca3d7866"},
-    "SKY19": {"panel": "panel2", "uuid": "864b456d-ed4c-4bbe-ae66-85baf7311691"},
-    "SKY20": {"panel": "panel2", "uuid": "5d325e05-ab32-4628-9e2e-5b97c62cf023"},
-    "SKY21": {"panel": "panel2", "uuid": "6b7b1396-e62b-48a9-bf77-29ea5a6346dc"},
-    "SKY22": {"panel": "panel2", "uuid": "a829bacd-8d30-40d2-bf09-bb1c1d364b39"},
-    "SKY23": {"panel": "panel2", "uuid": "8e051d4e-8f27-4453-9212-97df41309dd8"},
-    "SKY24": {"panel": "panel2", "uuid": "20526cd0-9d2b-4970-9279-3e8e381f2645"},
-    "SKY25": {"panel": "panel2", "uuid": "5057b359-2280-420b-97ff-7a4aff489eed"},
-    "SKY26": {"panel": "panel2", "uuid": "5f1668eb-f9d3-4917-ab6b-4dee1833a816"},
-    "SKY27": {"panel": "panel2", "uuid": "405a91e1-1cdd-43ab-9943-435adf265e40"},
-    "SKY28": {"panel": "panel2", "uuid": "a0f2444f-0d18-4caa-a42e-60e95ff67f6b"},
-    "SKY29": {"panel": "panel2", "uuid": "d0615b6f-01c8-4bea-a801-9e3419cda1da"},
-    "SKY30": {"panel": "panel2", "uuid": "990dfc55-5849-487d-a0cd-94c904348264"},
-    "SKY31": {"panel": "panel2", "uuid": "f1a220ef-a075-46d7-b0dc-1fc2339bae7"},
-    "SKY32": {"panel": "panel2", "uuid": "b7550f88-d065-4585-8d94-71325ccf27ea"},
-    "SKY33": {"panel": "panel2", "uuid": "c4a38ec6-60cb-413a-b872-3fec4b0d3598"},
-    "SKY34": {"panel": "panel2", "uuid": "03255ebf-6c13-43b3-b4cc-0ea23be86a2a"},
-    "SKY35": {"panel": "panel2", "uuid": "508862ef-ed52-4463-9ac7-c63ef1fbd22f"},
-    "SKY36": {"panel": "panel2", "uuid": "4dd410cf-45f0-48f2-bbcd-02c8638c149a"},
-    "SKY37": {"panel": "panel2", "uuid": "c627ef85-4a44-4573-9dfa-b2661fe75b08"},
-    "SKY38": {"panel": "panel2", "uuid": "c519883b-89f2-4c47-a98d-96663eaa5e1f"},
-    "SKY39": {"panel": "panel2", "uuid": "536c4231-a079-42af-a707-6c393eb5f649"},
-    "SKY40": {"panel": "panel2", "uuid": "6852a932-8057-4f5d-8ac5-37022716f816"},
-    "SKY41": {"panel": "panel2", "uuid": "e310b150-1498-4a11-a1c8-62496139dc99"},
-    "SKY42": {"panel": "panel2", "uuid": "60a72d41-e4b4-4477-a5b5-7167721c99ef"},
-    "SKY43": {"panel": "panel2", "uuid": "c31c72d5-ab08-4061-82b6-3b2e203a9c68"},
-    "SKY44": {"panel": "panel2", "uuid": "064ed6b9-6266-4d61-b066-ef205f1ff5fd"},
-    "SKY45": {"panel": "panel2", "uuid": "f8927f8c-04eb-42a5-9a95-352b07b81358"},
-    "SKY46": {"panel": "panel2", "uuid": "25912608-32e0-4b63-a32e-2db0432c1d1d"},
-    "SKY47": {"panel": "panel2", "uuid": "7f637dea-3015-48b5-966c-5b80430dc95a"},
-    "SKY48": {"panel": "panel2", "uuid": "b6f1fbcb-e2c7-4f5a-991b-19decee90db3"},
-    "SKY50": {"panel": "panel2", "uuid": "4120e6d4-5f7b-491b-949d-c8ae346b16e8"},
-    "SKY51": {"panel": "panel2", "uuid": "50f4afaa-f59c-4ef3-8f40-67f8a2f38318"},
-    "SKY52": {"panel": "panel2", "uuid": "53fe3162-6581-41ed-b0df-2bda0d4802e0"},
-    "SKY53": {"panel": "panel2", "uuid": "5a1c54c7-0f64-4ddb-b362-161b361cc0c7"},
-    "SKY54": {"panel": "panel2", "uuid": "b027ea98-f99c-4089-824f-a5562630df55"},
-    "SKY55": {"panel": "panel2", "uuid": "198b38cd-fd88-48fc-89b2-33657130d07e"},
-    "SKY56": {"panel": "panel2", "uuid": "f13d2ad0-06e3-4d48-b5a5-cad1087c6846"},
-    "SKY57": {"panel": "panel2", "uuid": "df0f0e3b-c9de-41a2-ac12-ef1eff66cb1"},
-    "SKY58": {"panel": "panel2", "uuid": "68b83787-1206-48d7-ac76-26b0b27adc55"},
-    "SKY59": {"panel": "panel2", "uuid": "77592ca5-dc27-42d6-8fa4-230d6b2980d0"},
-    "SKY60": {"panel": "panel2", "uuid": "e22d0b42-c4df-4ac4-ae60-9ba73cf91745"},
-    "SKY61": {"panel": "panel2", "uuid": "38b4371e-7102-4a14-97e0-6fea46918057"},
-    "SKY62": {"panel": "panel2", "uuid": "bcfe2ada-620b-4900-9f5a-cd78f24ac436"},
-    "SKY65": {"panel": "panel2", "uuid": "28fd0795-b73a-4f1e-88af-28ef6482af5f"},
-    "SKY66": {"panel": "panel2", "uuid": "b6dae810-6e82-4639-801f-9ac667267b70"},
-    "SKY67": {"panel": "panel2", "uuid": "1bbcc54f-26a7-4768-bfb9-b213322ad858"},
-    "SKY68": {"panel": "panel2", "uuid": "ec742b63-a312-4ae4-8d57-31ddbc24997f"},
-    "SKY69": {"panel": "panel2", "uuid": "870b2669-8f78-43a1-9e04-48f315db4b1d"},
-    "SKY70": {"panel": "panel2", "uuid": "ae72c26e-03e8-46bf-9d68-71ce375b4968"},
-    "SKY71": {"panel": "panel2", "uuid": "5947c12f-638d-4697-be75-ad5784a66661"},
-    "SKY72": {"panel": "panel2", "uuid": "7504fc75-5fb7-4eeb-bd4f-aebd05798418"},
-    "SKY73": {"panel": "panel2", "uuid": "f441796f-4805-4056-971a-9f9d39c7dee9"},
-    "SKY74": {"panel": "panel2", "uuid": "e32e881c-b1e8-4001-8517-090c3cb722f6"},
-    "SKY75": {"panel": "panel2", "uuid": "5302a88d-18b4-4d81-9652-35b397f38152"},
-    "SKY76": {"panel": "panel2", "uuid": "9cc59db9-3b36-47a5-b28e-d4fe491d9c32"},
-    "SKY77": {"panel": "panel2", "uuid": "bbfc3908-d1f3-418b-ab4d-0024b35525b1"},
-    "SKY78": {"panel": "panel2", "uuid": "95e03b84-b9ee-4a7c-9287-4076ac6df274"},
-    "SKY79": {"panel": "panel2", "uuid": "e664a649-b2ae-4eda-8ed2-2f52b7e2ed89"},
-    "SKY80": {"panel": "panel2", "uuid": "a8ffb138-a884-47bb-b46f-7f93933ddf37"},  
-    "SKY81": {"panel": "panel2", "uuid": "a2280f67-3be0-4ea0-8046-4b74fc2ba80f"},
-    "SKY82": {"panel": "panel2", "uuid": "95e17d93-f24a-4fe7-99a2-f8501260e6b3"},
-    "SKY83": {"panel": "panel2", "uuid": "f4e9286c-f982-44e6-81f9-e35eb1d97e7c"},
-    "SKY84": {"panel": "panel2", "uuid": "53f7d31e-64a9-4f77-8605-a532b66afbca"},
-    "SKY85": {"panel": "panel2", "uuid": "eceb2e07-82d2-4f86-bf49-97d06077e49e"},
-    "SKY86": {"panel": "panel2", "uuid": "017a0ca8-88c9-4a50-afea-cc1fdc46c52a"},
-    "SKY87": {"panel": "panel2", "uuid": "9a2e5e15-222c-4c0d-b2c3-949f93becad0"},
-    "SKY88": {"panel": "panel2", "uuid": "5c85bf8d-5147-4c2c-aa36-ac7d2b67fa24"},
-    "SKY89": {"panel": "panel2", "uuid": "50713840-5f28-456f-b66e-066d33fcf3f8"},
-    "SKY90": {"panel": "panel2", "uuid": "da8c42ea-889d-43ee-b5a1-63ef62cfcf0b"}
-}
+def load_users():
+    try:
+        with open("users.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
 # ==============================
-# DEVIRES DOSYASINDAN OKUMA
+# DEVİR OKU
 # ==============================
 def load_devirs():
     try:
@@ -142,7 +54,7 @@ def load_devirs():
         return {}
 
 # ==============================
-# YATIRIM, ÇEKİM & TESLİMAT CEK
+# VERİ ÇEK
 # ==============================
 async def fetch_user_amount(panel_config, user_uuid):
     ssl_ctx = ssl.create_default_context()
@@ -171,7 +83,7 @@ async def fetch_user_amount(panel_config, user_uuid):
             text = await r.text()
             csrf = ""
             for line in text.splitlines():
-                if 'name="csrf-token"' in line or 'meta name="csrf-token"' in line:
+                if 'csrf-token' in line:
                     csrf = line.split('content="')[1].split('"')[0]
                     break
 
@@ -185,9 +97,8 @@ async def fetch_user_amount(panel_config, user_uuid):
             data = await r.json()
             deposit_total = float(data.get("deposit", [0])[0] or 0)
             withdraw_total = float(data.get("withdraw", [0])[0] or 0)
-            delivery_total = float(data.get("delivery", [0,0])[1] or 0)
-            net = deposit_total - withdraw_total - delivery_total
-            return net
+            delivery_total = float(data.get("delivery", [0, 0])[1] or 0)
+            return deposit_total - withdraw_total - delivery_total
 
 # ==============================
 # /kasa KOMUTU
@@ -195,42 +106,50 @@ async def fetch_user_amount(panel_config, user_uuid):
 async def kasa(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = await update.message.reply_text("⏳ Kasa verileri alınıyor...")
     try:
+        users = load_users()
         devirs = load_devirs()
+
         results = []
         total = 0
-        for label in sorted(USERS.keys()):
-            info = USERS[label]
-            panel = info["panel"]
-            uuid = info["uuid"]
-            net = await fetch_user_amount(PANELS[panel], uuid)
+
+        for label in sorted(users.keys()):
+            info = users[label]
+
+            net = await fetch_user_amount(
+                PANELS[info["panel"]],
+                info["uuid"]
+            )
+
             devir = float(devirs.get(label, 0))
             net_total = net + devir
             total += net_total
+
             net_str = f"{int(net_total):,}".replace(",", ".") + " TL"
             results.append(f"{label} : {net_str}")
-        results.append(f"\nTOPLAM KASA : {int(total):,}".replace(",", ".") + " TL")
-        text = "\n".join(results)
-        await msg.edit_text(text)
+
+        # loading mesajını sil
+        await msg.delete()
+
+        # 5'li mesajlar halinde gönder
+        chunk_size = 5
+        for i in range(0, len(results), chunk_size):
+            chunk = results[i:i + chunk_size]
+            await update.message.reply_text("\n".join(chunk))
+
+        # toplam mesajı
+        await update.message.reply_text(
+            f"TOPLAM KASA : {int(total):,}".replace(",", ".") + " TL"
+        )
+
     except Exception as e:
         await msg.edit_text(f"❌ Hata oluştu:\n{e}")
 
 # ==============================
-# BOTU BASLAT
+# BOTU BAŞLAT
 # ==============================
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("kasa", kasa))
+
     print("Bot çalışıyor...")
-
     app.run_polling()
-
-
-
-
-
-
-
-
-
-
-
