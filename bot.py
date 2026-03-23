@@ -43,7 +43,6 @@ USERS = {
     "SKY10": {"panel": "panel1", "uuid": "b6b747cc-3462-4e49-9a69-10e403e30bf8"},
     "SKY17": {"panel": "panel1", "uuid": "db292c43-c433-485c-b603-9e1323e892ab"},
     "SKY49": {"panel": "panel1", "uuid": "92fb9297-a2f9-4203-af3c-db0bdd8aa1a9"},
-    "SKY54": {"panel": "panel1", "uuid": "2c0364e5-504a-4eaf-9155-412d6d4a9b73"},
     "SKY63": {"panel": "panel1", "uuid": "732ab5c4-6a4c-4d93-923a-78f1763b0df3"},
     "SKY64": {"panel": "panel1", "uuid": "b45bc465-cde9-4835-8cf4-82ab4d2555eb"},
 
@@ -95,6 +94,7 @@ USERS = {
     "SKY51": {"panel": "panel2", "uuid": "50f4afaa-f59c-4ef3-8f40-67f8a2f38318"},
     "SKY52": {"panel": "panel2", "uuid": "53fe3162-6581-41ed-b0df-2bda0d4802e0"},
     "SKY53": {"panel": "panel2", "uuid": "5a1c54c7-0f64-4ddb-b362-161b361cc0c7"},
+    "SKY54": {"panel": "panel2", "uuid": "b027ea98-f99c-4089-824f-a5562630df55"},
     "SKY55": {"panel": "panel2", "uuid": "198b38cd-fd88-48fc-89b2-33657130d07e"},
     "SKY56": {"panel": "panel2", "uuid": "f13d2ad0-06e3-4d48-b5a5-cad1087c6846"},
     "SKY57": {"panel": "panel2", "uuid": "df0f0e3b-c9de-41a2-ac12-ef1eff66cb1"},
