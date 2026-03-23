@@ -1,155 +1,157 @@
 import ssl
 import aiohttp
+import asyncio
 import json
 from datetime import datetime, timedelta
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import os
 
-# ==============================
-# RAILWAY ENV VARIABLES
-# ==============================
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
-PANEL1_URL = os.environ.get("PANEL1_URL")
-PANEL1_USER = os.environ.get("PANEL1_USER")
-PANEL1_PASS = os.environ.get("PANEL1_PASS")
-PANEL2_URL = os.environ.get("PANEL2_URL")
-PANEL2_USER = os.environ.get("PANEL2_USER")
-PANEL2_PASS = os.environ.get("PANEL2_PASS")
 
-# ==============================
-# PANEL AYARLARI
-# ==============================
 PANELS = {
     "panel1": {
-        "url": PANEL1_URL,
-        "username": PANEL1_USER,
-        "password": PANEL1_PASS
+        "url": os.environ.get("PANEL1_URL"),
+        "username": os.environ.get("PANEL1_USER"),
+        "password": os.environ.get("PANEL1_PASS")
     },
     "panel2": {
-        "url": PANEL2_URL,
-        "username": PANEL2_USER,
-        "password": PANEL2_PASS
+        "url": os.environ.get("PANEL2_URL"),
+        "username": os.environ.get("PANEL2_USER"),
+        "password": os.environ.get("PANEL2_PASS")
     }
 }
 
 # ==============================
-# USERS.JSON OKU
+# JSON OKUMA
 # ==============================
 def load_users():
-    try:
-        with open("users.json", "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
+    with open("users.json", "r", encoding="utf-8") as f:
+        return json.load(f)
 
-# ==============================
-# DEVİR OKU
-# ==============================
 def load_devirs():
     try:
         with open("devir.json", "r", encoding="utf-8") as f:
             return json.load(f)
-    except Exception:
+    except:
         return {}
 
 # ==============================
-# VERİ ÇEK
+# PANEL LOGIN (TEK SEFER)
 # ==============================
-async def fetch_user_amount(panel_config, user_uuid):
+async def panel_login(session, panel):
     ssl_ctx = ssl.create_default_context()
     ssl_ctx.check_hostname = False
     ssl_ctx.verify_mode = ssl.CERT_NONE
 
-    login_url = f"{panel_config['url']}/login"
-    reports_url = f"{panel_config['url']}/reports/quickly"
+    login_url = f"{panel['url']}/login"
 
-    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=ssl_ctx)) as session:
-        async with session.get(login_url) as r:
-            text = await r.text()
-            token = ""
-            for line in text.splitlines():
-                if 'name="_token"' in line:
-                    token = line.split('value="')[1].split('"')[0]
-                    break
+    async with session.get(login_url, ssl=ssl_ctx) as r:
+        text = await r.text()
 
-        await session.post(login_url, data={
-            "_token": token,
-            "email": panel_config['username'],
-            "password": panel_config['password']
-        })
+    token = text.split('name="_token" value="')[1].split('"')[0]
 
-        async with session.get(reports_url) as r:
-            text = await r.text()
-            csrf = ""
-            for line in text.splitlines():
-                if 'csrf-token' in line:
-                    csrf = line.split('content="')[1].split('"')[0]
-                    break
+    await session.post(login_url, data={
+        "_token": token,
+        "email": panel['username'],
+        "password": panel['password']
+    }, ssl=ssl_ctx)
 
-        today = (datetime.utcnow() + timedelta(hours=3)).strftime("%Y-%m-%d")
-
-        async with session.post(
-            reports_url,
-            headers={"X-CSRF-TOKEN": csrf, "Content-Type": "application/json"},
-            json={"site": "", "dateone": today, "datetwo": today, "bank": "", "user": user_uuid}
-        ) as r:
-            data = await r.json()
-            deposit_total = float(data.get("deposit", [0])[0] or 0)
-            withdraw_total = float(data.get("withdraw", [0])[0] or 0)
-            delivery_total = float(data.get("delivery", [0, 0])[1] or 0)
-            return deposit_total - withdraw_total - delivery_total
+    return True
 
 # ==============================
-# /kasa KOMUTU
+# VERİ ÇEKME
+# ==============================
+async def fetch_user(session, panel, uuid, sem):
+    async with sem:
+        try:
+            today = (datetime.utcnow() + timedelta(hours=3)).strftime("%Y-%m-%d")
+            url = f"{panel['url']}/reports/quickly"
+
+            async with session.get(url) as r:
+                text = await r.text()
+
+            csrf = text.split('content="')[1].split('"')[0]
+
+            async with session.post(
+                url,
+                headers={"X-CSRF-TOKEN": csrf, "Content-Type": "application/json"},
+                json={
+                    "site": "",
+                    "dateone": today,
+                    "datetwo": today,
+                    "bank": "",
+                    "user": uuid
+                }
+            ) as r:
+                data = await r.json()
+
+            deposit = float(data.get("deposit", [0])[0] or 0)
+            withdraw = float(data.get("withdraw", [0])[0] or 0)
+            delivery = float(data.get("delivery", [0, 0])[1] or 0)
+
+            return deposit - withdraw - delivery
+
+        except:
+            return 0
+
+# ==============================
+# KASA KOMUTU
 # ==============================
 async def kasa(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    msg = await update.message.reply_text("⏳ Kasa verileri alınıyor...")
-    try:
-        users = load_users()
-        devirs = load_devirs()
+    msg = await update.message.reply_text("⏳ Hesaplanıyor...")
 
-        results = []
-        total = 0
+    users = load_users()
+    devirs = load_devirs()
 
-        for label in sorted(users.keys()):
+    ssl_ctx = ssl.create_default_context()
+    ssl_ctx.check_hostname = False
+    ssl_ctx.verify_mode = ssl.CERT_NONE
+
+    connector = aiohttp.TCPConnector(ssl=ssl_ctx)
+
+    async with aiohttp.ClientSession(connector=connector) as session:
+
+        # 🔥 PANEL BAŞINA TEK LOGIN
+        for panel in PANELS.values():
+            await panel_login(session, panel)
+
+        sem = asyncio.Semaphore(10)  # BAN KORUMA
+
+        tasks = []
+        labels = sorted(users.keys())
+
+        for label in labels:
             info = users[label]
+            panel = PANELS[info["panel"]]
+            uuid = info["uuid"]
 
-            net = await fetch_user_amount(
-                PANELS[info["panel"]],
-                info["uuid"]
-            )
+            tasks.append(fetch_user(session, panel, uuid, sem))
 
+        nets = await asyncio.gather(*tasks)
+
+        total = 0
+        results = []
+
+        for i, label in enumerate(labels):
+            net = nets[i]
             devir = float(devirs.get(label, 0))
+
             net_total = net + devir
             total += net_total
 
             net_str = f"{int(net_total):,}".replace(",", ".") + " TL"
             results.append(f"{label} : {net_str}")
 
-        # loading mesajını sil
-        await msg.delete()
+        results.append(f"\nTOPLAM: {int(total):,}".replace(",", ".") + " TL")
 
-        # 5'li mesajlar halinde gönder
-        chunk_size = 5
-        for i in range(0, len(results), chunk_size):
-            chunk = results[i:i + chunk_size]
-            await update.message.reply_text("\n".join(chunk))
-
-        # toplam mesajı
-        await update.message.reply_text(
-            f"TOPLAM KASA : {int(total):,}".replace(",", ".") + " TL"
-        )
-
-    except Exception as e:
-        await msg.edit_text(f"❌ Hata oluştu:\n{e}")
+        await msg.edit_text("\n".join(results))
 
 # ==============================
-# BOTU BAŞLAT
+# BOT
 # ==============================
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("kasa", kasa))
-
     print("Bot çalışıyor...")
     app.run_polling()
