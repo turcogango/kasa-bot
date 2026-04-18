@@ -2,6 +2,7 @@ import ssl
 import aiohttp
 import asyncio
 import json
+import re
 from datetime import datetime, timedelta
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
@@ -112,20 +113,20 @@ async def kasa(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     async with aiohttp.ClientSession(connector=connector) as session:
 
-        # 🔥 PANEL BAŞINA TEK LOGIN
+        # PANEL LOGIN
         for panel in PANELS.values():
             await panel_login(session, panel)
 
-        sem = asyncio.Semaphore(10)  # BAN KORUMA
+        sem = asyncio.Semaphore(10)
+
+        # ✅ SAYISAL SIRALAMA (DÜZELTME BURADA)
+        labels = sorted(users.keys(), key=lambda x: int(re.search(r"\d+", x).group()))
 
         tasks = []
-        labels = sorted(users.keys())
-
         for label in labels:
             info = users[label]
             panel = PANELS[info["panel"]]
             uuid = info["uuid"]
-
             tasks.append(fetch_user(session, panel, uuid, sem))
 
         nets = await asyncio.gather(*tasks)
